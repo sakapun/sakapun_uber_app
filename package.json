@@ -15,12 +15,14 @@
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
     "aws-amplify": "^3.0.8",
+    "axios": "^0.19.2",
     "emotion-theming": "^10.0.27",
     "graphql-tag": "^2.10.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "ts-node": "^8.10.2",
     "typescript": "~3.7.2"
   },
   "scripts": {
@@ -28,8 +30,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint:fix": "eslint ./src/**/*.ts ./src/**/*.tsx",
-    "ggen": "amplify codegen --nodownload"
+    "lint:fix": "eslint ./src/**/*.ts ./src/**/*.tsx ./scripts/**/*.ts",
+    "ggen": "amplify codegen --nodownload",
+    "scraping": "ts-node --project scripts/scripts-tsconfig.json scripts/uber.ts"
   },
   "eslintConfig": {
     "extends": "react-app"
