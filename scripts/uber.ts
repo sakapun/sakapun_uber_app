@@ -1,6 +1,13 @@
 import axios from 'axios';
+import {LocationDetail, LocationStoreMap, StoreDetail} from "../types/uber_type";
+import distance from "@turf/distance"
+import {point} from "@turf/helpers"
 const { performance } = require('perf_hooks');
 
+export type UberResponse<DataType> = {
+  status: "success" | "failure",
+  data: DataType
+}
 const getAPIpath = (endpoint: string) => `https://www.ubereats.com/api/${endpoint}?localeCode=jp`
 const header = {
   "content-type": "application/json",
@@ -21,26 +28,76 @@ async function getStoresIds (addressEncoded: string): Promise<string[]> {
 }
 
 
-async function getAddress (landString: string): Promise<string> {
-  const autoCompleteRes = await axios.post("https://www.ubereats.com/api/getLocationAutocompleteV1?localeCode=jp", {
+async function getAddress (landString: string, index: number = 0): Promise<LocationDetail> {
+  const autoCompleteRes = await axios.post(getAPIpath("getLocationAutocompleteV1"), {
     query: landString
   }, {headers: header})
-  const first = autoCompleteRes.data.data[0]
+  const firstSuggestion = autoCompleteRes.data.data[0]
 
-  const detailRes = await axios.post("https://www.ubereats.com/api/getLocationDetailsV1?localeCode=jp", first, {headers: header})
-  return encodeURI(JSON.stringify(detailRes.data.data))
+  const detailRes = await axios.post<UberResponse<LocationDetail>>(getAPIpath("getLocationDetailsV1"), firstSuggestion, {headers: header})
+  return detailRes.data.data
+}
+
+async function getStore(uuid: string, index: number = 0): Promise<StoreDetail> {
+  if (index > 0) {
+    await sleep(index * 100);
+    console.log(`店舗${index}のサーチ中`)
+  }
+  const storeRes = await axios.post<UberResponse<StoreDetail>>(getAPIpath("getStoreV1"), {
+    storeUuid: uuid,
+    sfNuggetCount: 0
+  }, {headers: header})
+  return storeRes.data.data
+}
+function sleep(length: number) {
+  return new Promise(resolve => setTimeout(resolve, length));
+}
+
+async function addLocationStoresMap(landString: string, lsMap: LocationStoreMap, index: number = 0): Promise<LocationStoreMap> {
+  if (index > 0) {
+    await sleep(index * 100);
+    console.log(`住所${index}のサーチ中`)
+  }
+  const locationDetail = await getAddress(landString)
+  const addressEncoded = encodeURI(JSON.stringify(locationDetail))
+
+  const storeIds = await getStoresIds(addressEncoded)
+
+  return lsMap.set(locationDetail, storeIds)
 }
 
 main();
-// getAddress()
-
 async function main() {
-  const time1 = performance.now()
-  const addressEncoded = await getAddress("川口ビル")
-  const time2 = performance.now()
-  console.log(time2 - time1)
-  const storeIds = await getStoresIds(addressEncoded)
-  const time3 = performance.now()
-  console.log(time3 - time2)
-  console.log(storeIds)
+  // 検索文字列から対応店舗の取得
+  const lsMap: LocationStoreMap = new Map();
+  await Promise.all(
+    ["川口ビル", "新潟県庁", "極楽湯 女池", "ウォーターセル株式会社", "N1万代"].map((s, index) => {
+      return addLocationStoresMap(s, new Map(), index)
+        .then(r => r.forEach((v, k) => {
+          lsMap.set(k, v)
+        }))
+    })
+  )
+
+  // 店舗情報の取得
+  const storeIds: Set<string> = new Set(Array.from(lsMap.values()).flat())
+  const storeMaps: Map<string, StoreDetail> = new Map()
+  await Promise.all(Array.from(storeIds.values()).slice().map((s, index) => {
+    return getStore(s, index).then(detail => storeMaps.set(detail.uuid, detail))
+  }))
+
+  storeMaps.forEach((shopDetail, thisStoreKey) => {
+    const storePoint = point([shopDetail.location.longitude, shopDetail.location.latitude])
+    const mostDistance: {place: string, distance: number} = {place: "", distance: 0}
+    lsMap.forEach((deliveryStoreKeys, loc) => {
+      if (deliveryStoreKeys.find(sk => sk === thisStoreKey)) {
+        const locPoint = point([loc.longitude, loc.latitude])
+        const dNum = distance(locPoint, storePoint)
+        mostDistance.distance = mostDistance.distance > dNum ? mostDistance.distance : dNum;
+        mostDistance.place = mostDistance.distance > dNum ? mostDistance.place : loc.address.title;
+      }
+    })
+    console.log(`${shopDetail.title}と${mostDistance.place}の距離：${mostDistance.distance}` )
+  })
+  return
 }
