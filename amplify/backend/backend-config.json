@@ -1,18 +1,13 @@
 {
 	"auth": {
-		"amplifydeletemereactc73f18bf": {
-			"service": "Cognito",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": []
-		},
-		"amplifydeletemereact775c8a6f": {
+		"sakapunuberapp326dd590": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": []
 		}
 	},
 	"api": {
-		"amplifydeletemereact": {
+		"sakapunuberapp": {
 			"service": "AppSync",
 			"providerPlugin": "awscloudformation",
 			"output": {
@@ -21,7 +16,7 @@
 						{
 							"authenticationType": "AMAZON_COGNITO_USER_POOLS",
 							"userPoolConfig": {
-								"userPoolId": "authamplifydeletemereact775c8a6f"
+								"userPoolId": "authsakapunuberapp326dd590"
 							}
 						}
 					],
@@ -31,6 +26,5 @@
 				}
 			}
 		}
-	},
-	"hosting": {}
+	}
 }

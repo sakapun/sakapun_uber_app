@@ -1,0 +1,22 @@
+type Store @model @auth(rules:[
+  {allow: public, provider: iam, operations: [read]},
+  {allow: private, provider: userPools}
+])
+{
+  title: String!,
+  sanitizedTitle: String!
+  uuid: String!
+  cityId: Int!
+  priceBucket: String!
+  address: String!
+  streetAddress: String!
+  city: String!
+  country: String!
+  postalCode: String!
+  region: String!
+  latitude: Float!,
+  longitude: Float!
+  phoneNumber: String!
+  ratingValue: Float!
+  reviewCount: String!
+}
