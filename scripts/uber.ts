@@ -41,8 +41,8 @@ async function getAddress (landString: string, index: number = 0): Promise<Locat
 async function getStore(uuid: string, index: number = 0): Promise<StoreDetail> {
   if (index > 0) {
     await sleep(index * 100);
-    console.log(`店舗${index}のサーチ中`)
   }
+  console.log(`店舗${index}のサーチ中`)
   const storeRes = await axios.post<UberResponse<StoreDetail>>(getAPIpath("getStoreV1"), {
     storeUuid: uuid,
     sfNuggetCount: 0
@@ -56,8 +56,8 @@ function sleep(length: number) {
 async function addLocationStoresMap(landString: string, lsMap: LocationStoreMap, index: number = 0): Promise<LocationStoreMap> {
   if (index > 0) {
     await sleep(index * 100);
-    console.log(`住所${index}のサーチ中`)
   }
+  console.log(`住所${index}のサーチ中`)
   const locationDetail = await getAddress(landString)
   const addressEncoded = encodeURI(JSON.stringify(locationDetail))
 
