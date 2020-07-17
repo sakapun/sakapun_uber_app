@@ -264,6 +264,17 @@ export type DeleteStoreMutation = {
   } | null,
 };
 
+export type ListStoreIdsQuery = {
+  listStores:  {
+    __typename: "ModelStoreConnection",
+    items:  Array< {
+      __typename: "Store",
+      id: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
 export type GetStoreQueryVariables = {
   id: string,
 };

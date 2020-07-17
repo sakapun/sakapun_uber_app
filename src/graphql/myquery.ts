@@ -1,4 +1,15 @@
-// import gql from "graphql-tag";
+import gql from "graphql-tag";
+
+export const listStoreIds = gql`
+  query ListStoreIds ($nextToken: String) {
+      listStores(limit: 1000, nextToken: $nextToken) {
+          items {
+              id
+          }
+          nextToken
+      }
+  }
+`
 //
 // export const commentFlagment = gql`
 //     fragment commentFlagment on Comment {

@@ -7,7 +7,7 @@ import {
   MostDistanceInput
 } from "../types/amplify_api";
 
-import {amplifySignIn, amplifySignOut, simpleCreateStoreMutation} from "./amplify-cli";
+import {amplifySignIn, amplifySignOut, getAllStoreIds, simpleCreateStoreMutation} from "./amplify-cli";
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error(reason);
@@ -145,10 +145,15 @@ async function main() {
   // 最大の配達距離を計測して、appsync登録用に変換する
   const appsyncStores = await generateAppsyncStores(storeMaps, lsMap);
 
+  // 登録済みの全IDを取得する
+  const registerdIds = await getAllStoreIds();
+
   // appsyncに登録する
   await amplifySignIn().catch(e => console.warn(e));
   await Promise.all(
-    appsyncStores.map(simpleCreateStoreMutation)
+    appsyncStores
+      .filter(s => !registerdIds.includes(s.id || ""))
+      .map(simpleCreateStoreMutation)
   )
 
   await amplifySignOut().catch(e => console.warn(e))
