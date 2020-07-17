@@ -2,7 +2,11 @@ import axios from 'axios';
 import {LocationDetail, LocationStoreMap, StoreDetail} from "../types/uber_type";
 import distance from "@turf/distance"
 import {point} from "@turf/helpers"
+import {CreateStoreInput, CreateStoreMutation, CreateStoreMutationVariables} from "../types/amplify_api";
+import { mutation } from '../src/lib/amplify-query-helper';
+import {createStore} from "../src/graphql/mutations";
 const { performance } = require('perf_hooks');
+
 
 export type UberResponse<DataType> = {
   status: "success" | "failure",
@@ -66,6 +70,32 @@ async function addLocationStoresMap(landString: string, lsMap: LocationStoreMap,
   return lsMap.set(locationDetail, storeIds)
 }
 
+async function generateAppsyncStores(storeMaps: Map<string, StoreDetail>, lsMap:  LocationStoreMap) : Promise<CreateStoreInput[]> {
+  const storeWithDistArr: CreateStoreInput[] = [];
+  storeMaps.forEach((shopDetail, thisStoreKey) => {
+    const storePoint = point([shopDetail.location.longitude, shopDetail.location.latitude])
+    const mostDistance: {place: string, distance: number} = {place: "", distance: 0}
+    lsMap.forEach((deliveryStoreKeys, loc) => {
+      if (deliveryStoreKeys.find(sk => sk === thisStoreKey)) {
+        const locPoint = point([loc.longitude, loc.latitude])
+        const dNum = distance(locPoint, storePoint)
+        mostDistance.distance = mostDistance.distance > dNum ? mostDistance.distance : dNum;
+        mostDistance.place = mostDistance.distance > dNum ? mostDistance.place : loc.address.title;
+      }
+    })
+    storeWithDistArr.push({
+      ...shopDetail,
+      mostDistance: {
+        ...mostDistance,
+        longitude: 0,
+        latitude:0
+      }
+    })
+    console.log(`${shopDetail.title}と${mostDistance.place}の距離：${mostDistance.distance}` )
+  })
+  return storeWithDistArr;
+}
+
 main();
 async function main() {
   // 検索文字列から対応店舗の取得
@@ -86,18 +116,11 @@ async function main() {
     return getStore(s, index).then(detail => storeMaps.set(detail.uuid, detail))
   }))
 
-  storeMaps.forEach((shopDetail, thisStoreKey) => {
-    const storePoint = point([shopDetail.location.longitude, shopDetail.location.latitude])
-    const mostDistance: {place: string, distance: number} = {place: "", distance: 0}
-    lsMap.forEach((deliveryStoreKeys, loc) => {
-      if (deliveryStoreKeys.find(sk => sk === thisStoreKey)) {
-        const locPoint = point([loc.longitude, loc.latitude])
-        const dNum = distance(locPoint, storePoint)
-        mostDistance.distance = mostDistance.distance > dNum ? mostDistance.distance : dNum;
-        mostDistance.place = mostDistance.distance > dNum ? mostDistance.place : loc.address.title;
-      }
-    })
-    console.log(`${shopDetail.title}と${mostDistance.place}の距離：${mostDistance.distance}` )
+  // 最大の配達距離を計測して、appsync登録用に変換する
+  const appsyncStores = await generateAppsyncStores(storeMaps, lsMap);
+  mutation<CreateStoreMutation, CreateStoreMutationVariables>(createStore, {
+    input: appsyncStores[0]
   })
+
   return
 }

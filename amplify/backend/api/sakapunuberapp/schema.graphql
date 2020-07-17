@@ -3,20 +3,36 @@ type Store @model @auth(rules:[
   {allow: private, provider: userPools}
 ])
 {
-  title: String!,
+  title: String!
   sanitizedTitle: String!
   uuid: String!
   cityId: Int!
   priceBucket: String!
+  location: Location!
+  phoneNumber: String!
+  rating: Rating!
+  mostDistance: MostDistance!
+}
+
+type MostDistance {
+  distance: Float!
+  place: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type Location {
   address: String!
   streetAddress: String!
   city: String!
   country: String!
   postalCode: String!
   region: String!
-  latitude: Float!,
+  latitude: Float!
   longitude: Float!
-  phoneNumber: String!
+}
+
+type Rating {
   ratingValue: Float!
   reviewCount: String!
 }

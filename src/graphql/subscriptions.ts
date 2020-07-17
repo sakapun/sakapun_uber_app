@@ -10,17 +10,27 @@ export const onCreateStore = /* GraphQL */ `
       uuid
       cityId
       priceBucket
-      address
-      streetAddress
-      city
-      country
-      postalCode
-      region
-      latitude
-      longitude
+      location {
+        address
+        streetAddress
+        city
+        country
+        postalCode
+        region
+        latitude
+        longitude
+      }
       phoneNumber
-      ratingValue
-      reviewCount
+      rating {
+        ratingValue
+        reviewCount
+      }
+      mostDistance {
+        distance
+        place
+        latitude
+        longitude
+      }
     }
   }
 `;
@@ -32,17 +42,27 @@ export const onUpdateStore = /* GraphQL */ `
       uuid
       cityId
       priceBucket
-      address
-      streetAddress
-      city
-      country
-      postalCode
-      region
-      latitude
-      longitude
+      location {
+        address
+        streetAddress
+        city
+        country
+        postalCode
+        region
+        latitude
+        longitude
+      }
       phoneNumber
-      ratingValue
-      reviewCount
+      rating {
+        ratingValue
+        reviewCount
+      }
+      mostDistance {
+        distance
+        place
+        latitude
+        longitude
+      }
     }
   }
 `;
@@ -54,17 +74,27 @@ export const onDeleteStore = /* GraphQL */ `
       uuid
       cityId
       priceBucket
-      address
-      streetAddress
-      city
-      country
-      postalCode
-      region
-      latitude
-      longitude
+      location {
+        address
+        streetAddress
+        city
+        country
+        postalCode
+        region
+        latitude
+        longitude
+      }
       phoneNumber
-      ratingValue
-      reviewCount
+      rating {
+        ratingValue
+        reviewCount
+      }
+      mostDistance {
+        distance
+        place
+        latitude
+        longitude
+      }
     }
   }
 `;

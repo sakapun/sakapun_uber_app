@@ -10,17 +10,27 @@ export const getStore = /* GraphQL */ `
       uuid
       cityId
       priceBucket
-      address
-      streetAddress
-      city
-      country
-      postalCode
-      region
-      latitude
-      longitude
+      location {
+        address
+        streetAddress
+        city
+        country
+        postalCode
+        region
+        latitude
+        longitude
+      }
       phoneNumber
-      ratingValue
-      reviewCount
+      rating {
+        ratingValue
+        reviewCount
+      }
+      mostDistance {
+        distance
+        place
+        latitude
+        longitude
+      }
     }
   }
 `;
@@ -37,17 +47,27 @@ export const listStores = /* GraphQL */ `
         uuid
         cityId
         priceBucket
-        address
-        streetAddress
-        city
-        country
-        postalCode
-        region
-        latitude
-        longitude
+        location {
+          address
+          streetAddress
+          city
+          country
+          postalCode
+          region
+          latitude
+          longitude
+        }
         phoneNumber
-        ratingValue
-        reviewCount
+        rating {
+          ratingValue
+          reviewCount
+        }
+        mostDistance {
+          distance
+          place
+          latitude
+          longitude
+        }
       }
       nextToken
     }
