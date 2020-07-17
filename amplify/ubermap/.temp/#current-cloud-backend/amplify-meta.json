@@ -1,0 +1,15 @@
+{
+    "providers": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-amplifydeletemereact-ubermap-103948-authRole",
+            "UnauthRoleArn": "arn:aws:iam::586387790037:role/amplify-amplifydeletemereact-ubermap-103948-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::586387790037:role/amplify-amplifydeletemereact-ubermap-103948-authRole",
+            "Region": "ap-northeast-1",
+            "DeploymentBucketName": "amplify-amplifydeletemereact-ubermap-103948-deployment",
+            "UnauthRoleName": "amplify-amplifydeletemereact-ubermap-103948-unauthRole",
+            "StackName": "amplify-amplifydeletemereact-ubermap-103948",
+            "StackId": "arn:aws:cloudformation:ap-northeast-1:586387790037:stack/amplify-amplifydeletemereact-ubermap-103948/673db870-c7ce-11ea-b1ee-0e08659c816c",
+            "AmplifyAppId": "d2ytptyuregbm3"
+        }
+    }
+}
