@@ -5,9 +5,9 @@
 export const getStore = /* GraphQL */ `
   query GetStore($id: ID!) {
     getStore(id: $id) {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {
@@ -42,9 +42,9 @@ export const listStores = /* GraphQL */ `
   ) {
     listStores(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
+        id
         title
         sanitizedTitle
-        uuid
         cityId
         priceBucket
         location {

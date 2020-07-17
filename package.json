@@ -14,13 +14,16 @@
     "@turf/helpers": "^6.1.4",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.4",
+    "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
     "@types/turf": "^3.5.32",
     "aws-amplify": "^3.0.8",
     "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
     "emotion-theming": "^10.0.27",
     "graphql-tag": "^2.10.3",
+    "node-fetch": "^2.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
@@ -35,7 +38,8 @@
     "eject": "react-scripts eject",
     "lint:fix": "eslint ./src/**/*.ts ./src/**/*.tsx ./scripts/**/*.ts",
     "ggen": "amplify codegen --nodownload",
-    "scraping": "ts-node --project scripts/scripts-tsconfig.json scripts/uber.ts"
+    "scraping": "ts-node --project scripts/scripts-tsconfig.json scripts/uber.ts",
+    "amp": "ts-node --project scripts/scripts-tsconfig.json scripts/amplify-cli.ts"
   },
   "eslintConfig": {
     "extends": "react-app"

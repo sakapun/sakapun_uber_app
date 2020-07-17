@@ -8,9 +8,9 @@ export const createStore = /* GraphQL */ `
     $condition: ModelStoreConditionInput
   ) {
     createStore(input: $input, condition: $condition) {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {
@@ -43,9 +43,9 @@ export const updateStore = /* GraphQL */ `
     $condition: ModelStoreConditionInput
   ) {
     updateStore(input: $input, condition: $condition) {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {
@@ -78,9 +78,9 @@ export const deleteStore = /* GraphQL */ `
     $condition: ModelStoreConditionInput
   ) {
     deleteStore(input: $input, condition: $condition) {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {

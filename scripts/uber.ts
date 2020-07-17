@@ -2,10 +2,17 @@ import axios from 'axios';
 import {LocationDetail, LocationStoreMap, StoreDetail} from "../types/uber_type";
 import distance from "@turf/distance"
 import {point} from "@turf/helpers"
-import {CreateStoreInput, CreateStoreMutation, CreateStoreMutationVariables} from "../types/amplify_api";
-import { mutationCog } from '../src/lib/amplify-query-helper';
-import {createStore} from "../src/graphql/mutations";
-const { performance } = require('perf_hooks');
+import {
+  CreateStoreInput,
+  MostDistanceInput
+} from "../types/amplify_api";
+
+import {amplifySignIn, amplifySignOut, simpleCreateStoreMutation} from "./amplify-cli";
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error(reason);
+  process.exit(1);
+});
 
 
 export type UberResponse<DataType> = {
@@ -74,30 +81,45 @@ async function generateAppsyncStores(storeMaps: Map<string, StoreDetail>, lsMap:
   const storeWithDistArr: CreateStoreInput[] = [];
   storeMaps.forEach((shopDetail, thisStoreKey) => {
     const storePoint = point([shopDetail.location.longitude, shopDetail.location.latitude])
-    const mostDistance: {place: string, distance: number} = {place: "", distance: 0}
+    const mostDistance: MostDistanceInput = {
+      place: "",
+      distance: 0,
+      latitude: 0,
+      longitude: 0,
+    }
     lsMap.forEach((deliveryStoreKeys, loc) => {
       if (deliveryStoreKeys.find(sk => sk === thisStoreKey)) {
         const locPoint = point([loc.longitude, loc.latitude])
         const dNum = distance(locPoint, storePoint)
-        mostDistance.distance = mostDistance.distance > dNum ? mostDistance.distance : dNum;
-        mostDistance.place = mostDistance.distance > dNum ? mostDistance.place : loc.address.title;
+        if (dNum > mostDistance.distance) {
+          mostDistance.distance = dNum;
+          mostDistance.place = loc.address.title;
+          mostDistance.longitude = loc.longitude;
+          mostDistance.latitude = loc.latitude;
+        }
       }
     })
-    storeWithDistArr.push({
-      ...shopDetail,
-      mostDistance: {
-        ...mostDistance,
-        longitude: 0,
-        latitude:0
-      },
-      rating: shopDetail.rating ? shopDetail.rating : {
-        ratingValue: 0,
-        reviewCount: "0"
-      }
-    })
+    storeWithDistArr.push(buildAppsyncStore(shopDetail, mostDistance))
     console.log(`${shopDetail.title}と${mostDistance.place}の距離：${mostDistance.distance}` )
   })
   return storeWithDistArr;
+}
+
+function buildAppsyncStore(shopDetail: StoreDetail, mostDistance: MostDistanceInput): CreateStoreInput {
+  return {
+    id: shopDetail.uuid,
+    cityId: shopDetail.cityId,
+    location: shopDetail.location,
+    phoneNumber: shopDetail.phoneNumber,
+    priceBucket: shopDetail.priceBucket ? shopDetail.priceBucket : "",
+    sanitizedTitle: shopDetail.sanitizedTitle,
+    title: shopDetail.title,
+    mostDistance: mostDistance,
+    rating: shopDetail.rating ? shopDetail.rating : {
+      ratingValue: 0,
+      reviewCount: "0"
+    }
+  }
 }
 
 main();
@@ -122,9 +144,14 @@ async function main() {
 
   // 最大の配達距離を計測して、appsync登録用に変換する
   const appsyncStores = await generateAppsyncStores(storeMaps, lsMap);
-  // mutationCog<CreateStoreMutation, CreateStoreMutationVariables>(createStore, {
-  //   input: appsyncStores[0]
-  // })
+
+  // appsyncに登録する
+  await amplifySignIn().catch(e => console.warn(e));
+  await Promise.all(
+    appsyncStores.map(simpleCreateStoreMutation)
+  )
+
+  await amplifySignOut().catch(e => console.warn(e))
 
   return
 }

@@ -3,9 +3,9 @@
 //  This file was automatically generated and should not be edited.
 
 export type CreateStoreInput = {
+  id?: string | null,
   title: string,
   sanitizedTitle: string,
-  uuid: string,
   cityId: number,
   priceBucket: string,
   location: LocationInput,
@@ -40,7 +40,6 @@ export type MostDistanceInput = {
 export type ModelStoreConditionInput = {
   title?: ModelStringInput | null,
   sanitizedTitle?: ModelStringInput | null,
-  uuid?: ModelStringInput | null,
   cityId?: ModelIntInput | null,
   priceBucket?: ModelStringInput | null,
   phoneNumber?: ModelStringInput | null,
@@ -102,9 +101,9 @@ export type ModelIntInput = {
 };
 
 export type UpdateStoreInput = {
+  id: string,
   title?: string | null,
   sanitizedTitle?: string | null,
-  uuid?: string | null,
   cityId?: number | null,
   priceBucket?: string | null,
   location?: LocationInput | null,
@@ -118,15 +117,31 @@ export type DeleteStoreInput = {
 };
 
 export type ModelStoreFilterInput = {
+  id?: ModelIDInput | null,
   title?: ModelStringInput | null,
   sanitizedTitle?: ModelStringInput | null,
-  uuid?: ModelStringInput | null,
   cityId?: ModelIntInput | null,
   priceBucket?: ModelStringInput | null,
   phoneNumber?: ModelStringInput | null,
   and?: Array< ModelStoreFilterInput | null > | null,
   or?: Array< ModelStoreFilterInput | null > | null,
   not?: ModelStoreFilterInput | null,
+};
+
+export type ModelIDInput = {
+  ne?: string | null,
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  contains?: string | null,
+  notContains?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+  size?: ModelSizeInput | null,
 };
 
 export type CreateStoreMutationVariables = {
@@ -137,9 +152,9 @@ export type CreateStoreMutationVariables = {
 export type CreateStoreMutation = {
   createStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {
@@ -177,9 +192,9 @@ export type UpdateStoreMutationVariables = {
 export type UpdateStoreMutation = {
   updateStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {
@@ -217,9 +232,9 @@ export type DeleteStoreMutationVariables = {
 export type DeleteStoreMutation = {
   deleteStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {
@@ -256,9 +271,9 @@ export type GetStoreQueryVariables = {
 export type GetStoreQuery = {
   getStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {
@@ -299,9 +314,9 @@ export type ListStoresQuery = {
     __typename: "ModelStoreConnection",
     items:  Array< {
       __typename: "Store",
+      id: string,
       title: string,
       sanitizedTitle: string,
-      uuid: string,
       cityId: number,
       priceBucket: string,
       location:  {
@@ -336,9 +351,9 @@ export type ListStoresQuery = {
 export type OnCreateStoreSubscription = {
   onCreateStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {
@@ -371,9 +386,9 @@ export type OnCreateStoreSubscription = {
 export type OnUpdateStoreSubscription = {
   onUpdateStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {
@@ -406,9 +421,9 @@ export type OnUpdateStoreSubscription = {
 export type OnDeleteStoreSubscription = {
   onDeleteStore:  {
     __typename: "Store",
+    id: string,
     title: string,
     sanitizedTitle: string,
-    uuid: string,
     cityId: number,
     priceBucket: string,
     location:  {

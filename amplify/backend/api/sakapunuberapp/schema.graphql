@@ -3,9 +3,9 @@ type Store @model @auth(rules:[
   {allow: private, provider: userPools}
 ])
 {
+  id: ID!
   title: String!
   sanitizedTitle: String!
-  uuid: String!
   cityId: Int!
   priceBucket: String!
   location: Location!

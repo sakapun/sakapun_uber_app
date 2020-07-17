@@ -5,9 +5,9 @@
 export const onCreateStore = /* GraphQL */ `
   subscription OnCreateStore {
     onCreateStore {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {
@@ -37,9 +37,9 @@ export const onCreateStore = /* GraphQL */ `
 export const onUpdateStore = /* GraphQL */ `
   subscription OnUpdateStore {
     onUpdateStore {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {
@@ -69,9 +69,9 @@ export const onUpdateStore = /* GraphQL */ `
 export const onDeleteStore = /* GraphQL */ `
   subscription OnDeleteStore {
     onDeleteStore {
+      id
       title
       sanitizedTitle
-      uuid
       cityId
       priceBucket
       location {
