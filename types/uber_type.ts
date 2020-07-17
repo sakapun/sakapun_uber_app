@@ -41,7 +41,7 @@ export type StoreDetail = {
     "longitude": number
   },
   "phoneNumber": string
-  "rating": {
+  "rating": null | {
     "ratingValue": number,
     "reviewCount": string,
   },

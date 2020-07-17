@@ -3,7 +3,7 @@ import {LocationDetail, LocationStoreMap, StoreDetail} from "../types/uber_type"
 import distance from "@turf/distance"
 import {point} from "@turf/helpers"
 import {CreateStoreInput, CreateStoreMutation, CreateStoreMutationVariables} from "../types/amplify_api";
-import { mutation } from '../src/lib/amplify-query-helper';
+import { mutationCog } from '../src/lib/amplify-query-helper';
 import {createStore} from "../src/graphql/mutations";
 const { performance } = require('perf_hooks');
 
@@ -89,6 +89,10 @@ async function generateAppsyncStores(storeMaps: Map<string, StoreDetail>, lsMap:
         ...mostDistance,
         longitude: 0,
         latitude:0
+      },
+      rating: shopDetail.rating ? shopDetail.rating : {
+        ratingValue: 0,
+        reviewCount: "0"
       }
     })
     console.log(`${shopDetail.title}と${mostDistance.place}の距離：${mostDistance.distance}` )
@@ -101,7 +105,7 @@ async function main() {
   // 検索文字列から対応店舗の取得
   const lsMap: LocationStoreMap = new Map();
   await Promise.all(
-    ["川口ビル", "新潟県庁", "極楽湯 女池", "ウォーターセル株式会社", "N1万代"].map((s, index) => {
+    ["川口ビル", "新潟県庁", "極楽湯 女池", "ウォーターセル株式会社", "N1万代", "プルニマ", "新潟市立白山小学校"].map((s, index) => {
       return addLocationStoresMap(s, new Map(), index)
         .then(r => r.forEach((v, k) => {
           lsMap.set(k, v)
@@ -118,9 +122,9 @@ async function main() {
 
   // 最大の配達距離を計測して、appsync登録用に変換する
   const appsyncStores = await generateAppsyncStores(storeMaps, lsMap);
-  mutation<CreateStoreMutation, CreateStoreMutationVariables>(createStore, {
-    input: appsyncStores[0]
-  })
+  // mutationCog<CreateStoreMutation, CreateStoreMutationVariables>(createStore, {
+  //   input: appsyncStores[0]
+  // })
 
   return
 }
