@@ -17,6 +17,8 @@ const IndexPageComponent = (props: any) => {
       templateRows="100%"
       p={0}
     >
+      <Box>yes</Box>
+
     </Grid>
   )
 }

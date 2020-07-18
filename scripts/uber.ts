@@ -135,25 +135,32 @@ async function main() {
     })
   )
 
+  // 登録済みの全IDを取得する
+  await amplifySignIn().catch(e => console.warn(e));
+  const registerdIds = await getAllStoreIds();
+
+  // 未登録店舗があるかどうか
+  const storeIds: Set<string> = new Set(Array.from(lsMap.values()).flat().filter(s => !registerdIds.includes(s)))
+  if (storeIds.size === 0) {
+    // 追加店舗がなかったら終了
+    console.log("新規登録店舗はありません")
+    return
+  }
+
   // 店舗情報の取得
-  const storeIds: Set<string> = new Set(Array.from(lsMap.values()).flat())
-  const storeMaps: Map<string, StoreDetail> = new Map()
-  await Promise.all(Array.from(storeIds.values()).slice().map((s, index) => {
+  const storeMaps: Map<string, StoreDetail> = new Map();
+  await Promise.all(Array.from(storeIds.values()).map((s, index) => {
     return getStore(s, index).then(detail => storeMaps.set(detail.uuid, detail))
   }))
 
   // 最大の配達距離を計測して、appsync登録用に変換する
   const appsyncStores = await generateAppsyncStores(storeMaps, lsMap);
 
-  // 登録済みの全IDを取得する
-  const registerdIds = await getAllStoreIds();
+
 
   // appsyncに登録する
-  await amplifySignIn().catch(e => console.warn(e));
   await Promise.all(
-    appsyncStores
-      .filter(s => !registerdIds.includes(s.id || ""))
-      .map(simpleCreateStoreMutation)
+    appsyncStores.map(simpleCreateStoreMutation)
   )
 
   await amplifySignOut().catch(e => console.warn(e))
